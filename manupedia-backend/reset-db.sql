@@ -1,8 +1,8 @@
--- Create database
-CREATE DATABASE IF NOT EXISTS manupedia_db;
+DROP DATABASE IF EXISTS manupedia_db;
+CREATE DATABASE manupedia_db;
 USE manupedia_db;
 
--- Create users table (will be created automatically by Hibernate, but here for reference)
+-- Create users table
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create manuals table (will be created automatically by Hibernate)
+-- Create manuals table
 CREATE TABLE IF NOT EXISTS manuals (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS manuals (
     CONSTRAINT fk_manual_user FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- Create reviews table (will be created automatically by Hibernate)
+-- Create reviews table
 CREATE TABLE IF NOT EXISTS reviews (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
@@ -47,3 +47,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     CONSTRAINT fk_review_manual FOREIGN KEY (manual_id) REFERENCES manuals(id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- Insert initial admin user (password: admin123)
+INSERT INTO users (name, email, password, role) VALUES 
+('Admin', 'admin@manupedia.com', '$2a$10$6UVHQoHhPoKfgm0Z5QQHau.IfHm5y0LuL1nLAuSg9FZQoEopv.QJi', 'ADMIN');

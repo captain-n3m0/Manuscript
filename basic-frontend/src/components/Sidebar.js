@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Sidebar.css';
 import {
   HomeIcon,
@@ -7,14 +9,14 @@ import {
   ClockIcon,
   TagIcon,
   UsersIcon,
-  PlusIcon,
-  CloudArrowUpIcon,
   QuestionMarkCircleIcon,
   XMarkIcon,
   BookOpenIcon
 } from '@heroicons/react/24/outline';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [activeSection, setActiveSection] = useState('main-page');
 
   const navigationItems = [
@@ -27,18 +29,46 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   ];
 
   const quickAccessItems = [
-    { id: 'create-article', label: 'Create Article', icon: PlusIcon },
-    { id: 'upload-manuscript', label: 'Upload Manuscript', icon: CloudArrowUpIcon },
-    { id: 'help-guidelines', label: 'Help & Guidelines', icon: QuestionMarkCircleIcon }
-  ];
+    { id: 'help-guidelines', label: 'Help & Guidelines', icon: QuestionMarkCircleIcon, requiresAuth: false }
+  ].filter(item => !item.requiresAuth || isAuthenticated());
 
   const handleNavClick = (itemId) => {
     setActiveSection(itemId);
-    console.log('Navigating to:', itemId);
+    switch(itemId) {
+      case 'main-page':
+        navigate('/');
+        toggleSidebar(); // Close sidebar after navigation on mobile
+        break;
+      case 'browse-manuscripts':
+        navigate('/browse');
+        toggleSidebar(); // Close sidebar after navigation on mobile
+        break;
+      case 'featured-articles':
+        // TODO: Add featured articles route
+        break;
+      case 'recent-changes':
+        // TODO: Add recent changes route
+        break;
+      case 'categories':
+        // TODO: Add categories route
+        break;
+      case 'contributors':
+        // TODO: Add contributors route
+        break;
+      default:
+        console.log('Navigating to:', itemId);
+    }
   };
 
   const handleQuickAccessClick = (itemId) => {
-    console.log('Quick access:', itemId);
+    switch(itemId) {
+      case 'help-guidelines':
+        navigate('/help');
+        toggleSidebar(); // Close sidebar after navigation on mobile
+        break;
+      default:
+        console.log('Quick access:', itemId);
+    }
   };
 
   return (
@@ -80,6 +110,30 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               })}
             </ul>
           </div>
+
+          {/* Admin Section */}
+          {isAdmin() && (
+            <div className="sidebar-section">
+              <h4 className="sidebar-section-title">ADMIN</h4>
+              <ul className="sidebar-nav">
+                <li className="sidebar-nav-item">
+                  <button
+                    className={`sidebar-nav-link ${
+                      activeSection === 'admin' ? 'active' : ''
+                    }`}
+                    onClick={() => {
+                      setActiveSection('admin');
+                      navigate('/admin');
+                      toggleSidebar();
+                    }}
+                  >
+                    <UsersIcon className="sidebar-nav-icon" />
+                    <span className="sidebar-nav-text">Admin Panel</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
 
           {/* Quick Access */}
           <div className="sidebar-section">

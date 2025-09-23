@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './Navbar.css';
 import {
   MagnifyingGlassIcon,
   Bars3Icon,
   UserCircleIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  CloudArrowUpIcon
 } from '@heroicons/react/24/outline';
 
 const Navbar = ({ toggleSidebar, onLoginClick, onSignupClick }) => {
   const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -57,27 +60,36 @@ const Navbar = ({ toggleSidebar, onLoginClick, onSignupClick }) => {
         {/* Auth Buttons */}
         <div className="navbar-auth">
           {user ? (
-            <div className="user-menu">
+            <div className="auth-container">
               <button
-                className="user-menu-button"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="btn btn-upload"
+                onClick={() => navigate('/upload')}
               >
-                <UserCircleIcon className="w-6 h-6" />
-                <span>{user.name}</span>
+                <CloudArrowUpIcon className="w-5 h-5" />
+                <span>Upload Manuscript</span>
               </button>
-              {userMenuOpen && (
-                <div className="user-dropdown">
-                  <div className="user-info">
-                    <p>{user.name}</p>
-                    <p className="user-email">{user.email}</p>
+              <div className="user-menu">
+                <button
+                  className="user-menu-button"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                >
+                  <UserCircleIcon className="w-6 h-6" />
+                  <span>{user.name}</span>
+                </button>
+                {userMenuOpen && (
+                  <div className="user-dropdown">
+                    <div className="user-info">
+                      <p>{user.name}</p>
+                      <p className="user-email">{user.email}</p>
+                    </div>
+                    <hr />
+                    <button onClick={handleLogout} className="logout-btn">
+                      <ArrowRightOnRectangleIcon className="w-4 h-4" />
+                      Sign Out
+                    </button>
                   </div>
-                  <hr />
-                  <button onClick={handleLogout} className="logout-btn">
-                    <ArrowRightOnRectangleIcon className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ) : (
             <>

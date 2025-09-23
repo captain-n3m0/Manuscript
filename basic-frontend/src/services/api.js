@@ -54,12 +54,13 @@ export const authAPI = {
   },
 
   // User signup
-  signup: async (name, email, password) => {
+  signup: async (name, email, password, phone) => {
     try {
       const response = await api.post('/api/auth/signup', {
         name,
         email,
-        password
+        password,
+        phone
       });
       return response.data;
     } catch (error) {

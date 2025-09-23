@@ -17,15 +17,23 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS manuals (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    author VARCHAR(255),
+    date_created VARCHAR(100),
+    origin_location VARCHAR(255),
+    language VARCHAR(100),
+    material VARCHAR(255),
+    dimensions VARCHAR(100),
+    manuscript_condition VARCHAR(50),
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
     description TEXT,
-    brand VARCHAR(255) NOT NULL,
-    model VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    file_url VARCHAR(500),
+    content TEXT,
+    image_data LONGBLOB,
+    image_type VARCHAR(50),
     uploaded_by BIGINT,
+    featured BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    CONSTRAINT fk_manual_user FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Create reviews table (will be created automatically by Hibernate)
@@ -37,6 +45,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     user_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (manual_id) REFERENCES manuals(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT fk_review_manual FOREIGN KEY (manual_id) REFERENCES manuals(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

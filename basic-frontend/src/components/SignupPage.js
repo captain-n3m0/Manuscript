@@ -8,7 +8,8 @@ import {
   EnvelopeIcon,
   LockClosedIcon,
   BookOpenIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  PhoneIcon
 } from '@heroicons/react/24/outline';
 
 const SignupPage = ({ onSwitchToLogin, onClose }) => {
@@ -17,6 +18,7 @@ const SignupPage = ({ onSwitchToLogin, onClose }) => {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -87,12 +89,17 @@ const SignupPage = ({ onSwitchToLogin, onClose }) => {
       return;
     }
 
+    if (!formData.phone.match(/^\d{10}$/)) {
+      setError('Please enter a valid 10-digit phone number');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       // Combine first and last name into a single name field
       const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-      await signup(fullName, formData.email, formData.password);
+  await signup(fullName, formData.email, formData.password);
       onClose(); // Close modal on successful signup
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.');
@@ -154,6 +161,25 @@ const SignupPage = ({ onSwitchToLogin, onClose }) => {
                     className="auth-input"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="phone">Phone Number</label>
+              <div className="input-wrapper">
+                <PhoneIcon className="input-icon" />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="Enter your phone number"
+                  required
+                  className="auth-input"
+                  pattern="[0-9]{10}"
+                  title="Please enter a valid 10-digit phone number"
+                />
               </div>
             </div>
 

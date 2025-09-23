@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
+import axios from 'axios';
 import {
   ChartBarIcon,
   ClockIcon,
@@ -9,29 +11,69 @@ import {
 } from '@heroicons/react/24/outline';
 
 const HomePage = () => {
-  const statistics = [
+  const navigate = useNavigate();
+  const [statistics, setStatistics] = useState([
     {
-      number: '2,847',
+      number: '...',
       label: 'Total Manuscripts',
       icon: ChartBarIcon
     },
     {
-      number: '156',
+      number: '...',
       label: 'Recent Updates',
       icon: ClockIcon
     },
     {
-      number: '1,293',
+      number: '...',
       label: 'Contributors',
       icon: UsersIcon
     }
-  ];
+  ]);
+  
+  const [featuredManuscripts, setFeaturedManuscripts] = useState([]);
 
-  const featuredManuscript = {
-    title: 'The Voynich Manuscript: Decoding Medieval Mysteries',
-    description: 'An illustrated codex hand-written in an unknown script and language. Dating to the early 15th century, this mysterious manuscript has fascinated researchers and cryptographers for centuries with its undeciphered text and peculiar illustrations of unknown plants, astronomical diagrams, and biological systems.',
-    tags: ['Medieval Studies', 'Cryptography']
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch statistics
+        const statsResponse = await axios.get('http://localhost:8080/api/dashboard/stats');
+        const statsData = statsResponse.data;
+        
+        // Fetch featured manuscripts
+        const featuredResponse = await axios.get('http://localhost:8080/api/manuals/featured');
+        setFeaturedManuscripts(featuredResponse.data);
+
+        setStatistics([
+          {
+            number: statsData.totalManuscripts.toLocaleString(),
+            label: 'Total Manuscripts',
+            icon: ChartBarIcon
+          },
+          {
+            number: statsData.recentUpdates.toLocaleString(),
+            label: 'Recent Updates',
+            icon: ClockIcon
+          },
+          {
+            number: statsData.contributors.toLocaleString(),
+            label: 'Contributors',
+            icon: UsersIcon
+          }
+        ]);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+
+    fetchData();
+    // Set up auto-refresh every 5 minutes
+    const intervalId = setInterval(fetchData, 5 * 60 * 1000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+
 
   return (
     <div className="homepage">
@@ -65,30 +107,53 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Featured Manuscript Section */}
-      <section className="featured-section">
-        <div className="featured-card">
-          <div className="featured-header">
-            <StarIcon className="w-5 h-5 featured-icon" />
-            <h2>Featured Manuscript</h2>
-          </div>
+      {/* Featured Manuscripts Section */}
+      <section className="featured-section" data-testid="featured-manuscripts">
+        <div className="featured-header">
+          <StarIcon className="w-5 h-5 featured-icon" />
+          <h2>Featured Manuscripts</h2>
+        </div>
+        
+        <div className="featured-grid">
+          {featuredManuscripts.length > 0 ? (
+            featuredManuscripts.map((manuscript) => (
+              <div key={manuscript.id} className="featured-card">
+                {manuscript.imageData && (
+                  <img 
+                    src={`data:${manuscript.imageType};base64,${manuscript.imageData}`}
+                    alt={manuscript.title}
+                    className="featured-image"
+                  />
+                )}
 
-          <h3 className="featured-title">{featuredManuscript.title}</h3>
+                <div className="featured-content">
+                  <h3 className="featured-title">{manuscript.title}</h3>
+                  
+                  <div className="featured-tags">
+                    <span className="tag">{manuscript.language}</span>
+                    {manuscript.material && <span className="tag">{manuscript.material}</span>}
+                    {manuscript.condition && <span className="tag">{manuscript.condition}</span>}
+                  </div>
 
-          <div className="featured-tags">
-            {featuredManuscript.tags.map((tag, index) => (
-              <span key={index} className="tag">{tag}</span>
-            ))}
-          </div>
+                  <p className="featured-description">
+                    {manuscript.description}
+                  </p>
 
-          <p className="featured-description">
-            {featuredManuscript.description}
-          </p>
-
-          <button className="read-more-btn">
-            Read Full Article
-            <ArrowRightIcon className="w-4 h-4 ml-2" />
-          </button>
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => navigate(`/manuscripts/${manuscript.id}`)}
+                  >
+                    Read Full Article
+                    <ArrowRightIcon className="w-4 h-4 ml-2" />
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-featured">
+              <p>No featured manuscripts at this time.</p>
+            </div>
+          )}
         </div>
       </section>
 
