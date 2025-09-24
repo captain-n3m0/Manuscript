@@ -81,4 +81,36 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
     }
+
+    public AuthResponse createAdminUser() {
+        try {
+            String adminEmail = "admin@manupedia.com";
+
+            // Check if admin already exists
+            if (userService.existsByEmail(adminEmail)) {
+                throw new RuntimeException("Admin user already exists!");
+            }
+
+            // Create admin user
+            User admin = new User();
+            admin.setName("Admin User");
+            admin.setEmail(adminEmail);
+            admin.setPassword(passwordEncoder.encode("admin123")); // Default password
+            admin.setRole(User.Role.ADMIN);
+
+            admin = userService.save(admin);
+
+            String token = jwtUtil.generateToken(admin);
+
+            return new AuthResponse(
+                    token,
+                    admin.getId(),
+                    admin.getEmail(),
+                    admin.getName(),
+                    admin.getRole().toString()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Admin creation failed: " + e.getMessage());
+        }
+    }
 }

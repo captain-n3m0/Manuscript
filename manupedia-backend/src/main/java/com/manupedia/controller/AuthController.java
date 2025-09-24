@@ -48,7 +48,19 @@ public class AuthController {
     @GetMapping("/test")
     public ResponseEntity<Map<String, String>> test() {
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Auth endpoint is working!");
+        response.put("message", "Auth controller is working!");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> createAdmin() {
+        try {
+            AuthResponse response = authService.createAdminUser();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
     }
 }

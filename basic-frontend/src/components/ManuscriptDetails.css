@@ -1,0 +1,297 @@
+/* ManuscriptDetails.css */
+.manuscript-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.manuscript-details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 20px;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.manuscript-details-content {
+  display: flex;
+  gap: 20px;
+}
+
+.manuscript-details-main {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.manuscript-details-sidebar {
+  flex: 1;
+}
+
+.manuscript-image-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.manuscript-main-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.manuscript-thumbnail-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding: 5px 0;
+}
+
+.manuscript-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.manuscript-thumbnail.selected {
+  border-color: #4a6741;
+}
+
+.manuscript-details-tabs {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.manuscript-tabs-header {
+  background-color: #4a6741;
+  padding: 12px 20px;
+}
+
+.manuscript-tabs-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+}
+
+.manuscript-tab-content {
+  padding: 20px;
+}
+
+.manuscript-description {
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.manuscript-full-text {
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.philosophical-concepts, .content-sections {
+  margin-top: 30px;
+}
+
+.philosophical-concepts h3, .content-sections h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #4a6741;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.content-sections h4 {
+  font-size: 16px;
+  margin: 15px 0 8px 0;
+  color: #333;
+}
+
+.philosophical-concepts ul, .content-sections ul {
+  padding-left: 20px;
+}
+
+.philosophical-concepts li, .content-sections li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.manuscript-details-box {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.manuscript-details-box h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #4a6741;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.manuscript-metadata {
+  font-size: 14px;
+}
+
+.metadata-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.metadata-label {
+  font-weight: bold;
+  min-width: 100px;
+  color: #555;
+}
+
+.manuscript-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.manuscript-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.download-btn {
+  background-color: #4a6741;
+  color: white;
+}
+
+.download-btn:hover {
+  background-color: #3d5535;
+}
+
+.share-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.share-btn:hover {
+  background-color: #d0d0d0;
+}
+
+.edit-btn {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #3a80d2;
+}
+
+.delete-btn {
+  background-color: #e53935;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+.share-this-manuscript {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.share-this-manuscript h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #4a6741;
+}
+
+.share-url-container {
+  display: flex;
+  gap: 8px;
+}
+
+.share-url-input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.copy-link-btn {
+  background-color: #4a6741;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-link-btn:hover {
+  background-color: #3d5535;
+}
+
+.manuscript-details-loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #555;
+}
+
+.manuscript-details-error {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #e53935;
+}
+
+@media (max-width: 768px) {
+  .manuscript-details-content {
+    flex-direction: column;
+  }
+
+  .manuscript-details-sidebar {
+    order: -1;
+  }
+
+  .metadata-row {
+    flex-direction: column;
+    margin-bottom: 12px;
+  }
+
+  .metadata-label {
+    margin-bottom: 4px;
+  }
+}

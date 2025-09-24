@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import './Sidebar.css';
+import { useAuth } from '../contexts/AuthContext';
 import {
   HomeIcon,
   DocumentTextIcon,
@@ -9,65 +8,68 @@ import {
   ClockIcon,
   TagIcon,
   UsersIcon,
+  PlusIcon,
+  CloudArrowUpIcon,
   QuestionMarkCircleIcon,
   XMarkIcon,
-  BookOpenIcon
+  BookOpenIcon,
+  CogIcon
 } from '@heroicons/react/24/outline';
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated, isAdmin } = useAuth();
-  const [activeSection, setActiveSection] = useState('main-page');
+const Sidebar = ({
+  isOpen,
+  toggleSidebar,
+  onUploadManuscript,
+  onHelpGuidelines,
+  onNavigateHome,
+  onNavigateBrowse,
+  onNavigateAdmin,
+  currentPage
+}) => {
+  const { isAuthenticated, user } = useAuth();
 
   const navigationItems = [
-    { id: 'main-page', label: 'Main Page', icon: HomeIcon },
-    { id: 'browse-manuscripts', label: 'Browse Manuscripts', icon: DocumentTextIcon },
-    { id: 'featured-articles', label: 'Featured Articles', icon: StarIcon },
-    { id: 'recent-changes', label: 'Recent Changes', icon: ClockIcon },
-    { id: 'categories', label: 'Categories', icon: TagIcon },
-    { id: 'contributors', label: 'Contributors', icon: UsersIcon }
+    { id: 'main-page', label: 'Main Page', icon: HomeIcon, page: 'home' },
+    { id: 'browse-manuscripts', label: 'Browse Manuscripts', icon: DocumentTextIcon, page: 'browse' },
+    { id: 'featured-articles', label: 'Featured Articles', icon: StarIcon, page: 'home' },
+    { id: 'recent-changes', label: 'Recent Changes', icon: ClockIcon, page: 'home' },
+    { id: 'categories', label: 'Categories', icon: TagIcon, page: 'home' },
+    { id: 'contributors', label: 'Contributors', icon: UsersIcon, page: 'home' }
   ];
 
   const quickAccessItems = [
-    { id: 'help-guidelines', label: 'Help & Guidelines', icon: QuestionMarkCircleIcon, requiresAuth: false }
-  ].filter(item => !item.requiresAuth || isAuthenticated());
+    { id: 'upload-manuscript', label: 'Upload Manuscript', icon: CloudArrowUpIcon, requiresAuth: true },
+    { id: 'help-guidelines', label: 'Help & Guidelines', icon: QuestionMarkCircleIcon, requiresAuth: false },
+    { id: 'admin-panel', label: 'Admin Panel', icon: CogIcon, requiresAuth: true, requiresAdmin: true }
+  ];
 
-  const handleNavClick = (itemId) => {
-    setActiveSection(itemId);
-    switch(itemId) {
-      case 'main-page':
-        navigate('/');
-        toggleSidebar(); // Close sidebar after navigation on mobile
-        break;
-      case 'browse-manuscripts':
-        navigate('/browse');
-        toggleSidebar(); // Close sidebar after navigation on mobile
-        break;
-      case 'featured-articles':
-        // TODO: Add featured articles route
-        break;
-      case 'recent-changes':
-        // TODO: Add recent changes route
-        break;
-      case 'categories':
-        // TODO: Add categories route
-        break;
-      case 'contributors':
-        // TODO: Add contributors route
-        break;
-      default:
-        console.log('Navigating to:', itemId);
+  // Filter quick access items based on authentication and admin role
+  const availableQuickAccessItems = quickAccessItems.filter(item => {
+    if (!item.requiresAuth) return true;
+    if (!isAuthenticated()) return false;
+    if (item.requiresAdmin && (!user || user.role !== 'ADMIN')) return false;
+    return true;
+  });
+
+  const handleNavClick = (itemId, page) => {
+    console.log('Navigating to:', itemId, 'page:', page);
+    if (page === 'home' && onNavigateHome) {
+      onNavigateHome();
+    } else if (page === 'browse' && onNavigateBrowse) {
+      onNavigateBrowse();
     }
   };
 
   const handleQuickAccessClick = (itemId) => {
-    switch(itemId) {
-      case 'help-guidelines':
-        navigate('/help');
-        toggleSidebar(); // Close sidebar after navigation on mobile
-        break;
-      default:
-        console.log('Quick access:', itemId);
+    console.log('Quick access:', itemId);
+    if (itemId === 'upload-manuscript' && onUploadManuscript) {
+      onUploadManuscript();
+    }
+    if (itemId === 'help-guidelines' && onHelpGuidelines) {
+      onHelpGuidelines();
+    }
+    if (itemId === 'admin-panel' && onNavigateAdmin) {
+      onNavigateAdmin();
     }
   };
 
@@ -94,13 +96,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <ul className="sidebar-nav">
               {navigationItems.map((item) => {
                 const IconComponent = item.icon;
+                const isActive = (item.page === currentPage) ||
+                                (item.id === 'main-page' && currentPage === 'home');
                 return (
                   <li key={item.id} className="sidebar-nav-item">
                     <button
-                      className={`sidebar-nav-link ${
-                        activeSection === item.id ? 'active' : ''
-                      }`}
-                      onClick={() => handleNavClick(item.id)}
+                      className={`sidebar-nav-link ${isActive ? 'active' : ''}`}
+                      onClick={() => handleNavClick(item.id, item.page)}
                     >
                       <IconComponent className="sidebar-nav-icon" />
                       <span className="sidebar-nav-text">{item.label}</span>
@@ -111,35 +113,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </ul>
           </div>
 
-          {/* Admin Section */}
-          {isAdmin() && (
-            <div className="sidebar-section">
-              <h4 className="sidebar-section-title">ADMIN</h4>
-              <ul className="sidebar-nav">
-                <li className="sidebar-nav-item">
-                  <button
-                    className={`sidebar-nav-link ${
-                      activeSection === 'admin' ? 'active' : ''
-                    }`}
-                    onClick={() => {
-                      setActiveSection('admin');
-                      navigate('/admin');
-                      toggleSidebar();
-                    }}
-                  >
-                    <UsersIcon className="sidebar-nav-icon" />
-                    <span className="sidebar-nav-text">Admin Panel</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-
           {/* Quick Access */}
           <div className="sidebar-section">
             <h4 className="sidebar-section-title">QUICK ACCESS</h4>
             <ul className="sidebar-quick-access">
-              {quickAccessItems.map((item) => {
+              {availableQuickAccessItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <li key={item.id} className="sidebar-quick-item">

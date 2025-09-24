@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
-import axios from 'axios';
+import { manuscriptsAPI } from '../services/api';
 import {
   ChartBarIcon,
   ClockIcon,
   UsersIcon,
   StarIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 
-const HomePage = () => {
-  const navigate = useNavigate();
+const HomePage = ({ onViewManuscript }) => {
   const [statistics, setStatistics] = useState([
     {
       number: '...',
@@ -29,51 +28,72 @@ const HomePage = () => {
       icon: UsersIcon
     }
   ]);
-  
-  const [featuredManuscripts, setFeaturedManuscripts] = useState([]);
+  const [recentManuscripts, setRecentManuscripts] = useState([]);
+  const [featuredManuscript, setFeaturedManuscript] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch statistics
-        const statsResponse = await axios.get('http://localhost:8080/api/dashboard/stats');
-        const statsData = statsResponse.data;
-        
-        // Fetch featured manuscripts
-        const featuredResponse = await axios.get('http://localhost:8080/api/manuals/featured');
-        setFeaturedManuscripts(featuredResponse.data);
-
-        setStatistics([
-          {
-            number: statsData.totalManuscripts.toLocaleString(),
-            label: 'Total Manuscripts',
-            icon: ChartBarIcon
-          },
-          {
-            number: statsData.recentUpdates.toLocaleString(),
-            label: 'Recent Updates',
-            icon: ClockIcon
-          },
-          {
-            number: statsData.contributors.toLocaleString(),
-            label: 'Contributors',
-            icon: UsersIcon
-          }
-        ]);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
-    };
-
-    fetchData();
-    // Set up auto-refresh every 5 minutes
-    const intervalId = setInterval(fetchData, 5 * 60 * 1000);
-    
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
+    fetchStatistics();
+    fetchRecentManuscripts();
+    fetchFeaturedManuscript();
   }, []);
 
+  const fetchStatistics = async () => {
+    try {
+      const data = await manuscriptsAPI.getStatistics();
+      setStatistics([
+        {
+          number: data.totalManuscripts.toLocaleString(),
+          label: 'Total Manuscripts',
+          icon: ChartBarIcon
+        },
+        {
+          number: data.recentUpdates.toLocaleString(),
+          label: 'Recent Updates',
+          icon: ClockIcon
+        },
+        {
+          number: data.totalContributors.toLocaleString(),
+          label: 'Contributors',
+          icon: UsersIcon
+        }
+      ]);
+    } catch (err) {
+      console.error('Failed to fetch statistics:', err);
+      setError('Failed to load statistics');
+    }
+  };
 
+  const fetchRecentManuscripts = async () => {
+    try {
+      const data = await manuscriptsAPI.getRecentManuscripts(6);
+      setRecentManuscripts(data);
+    } catch (err) {
+      console.error('Failed to fetch recent manuscripts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFeaturedManuscript = async () => {
+    try {
+      const data = await manuscriptsAPI.getFeaturedManuscript();
+      setFeaturedManuscript(data);
+    } catch (err) {
+      console.error('Failed to fetch featured manuscript:', err);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
   return (
     <div className="homepage">
@@ -107,51 +127,49 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Featured Manuscripts Section */}
-      <section className="featured-section" data-testid="featured-manuscripts">
-        <div className="featured-header">
-          <StarIcon className="w-5 h-5 featured-icon" />
-          <h2>Featured Manuscripts</h2>
-        </div>
-        
-        <div className="featured-grid">
-          {featuredManuscripts.length > 0 ? (
-            featuredManuscripts.map((manuscript) => (
-              <div key={manuscript.id} className="featured-card">
-                {manuscript.imageData && (
-                  <img 
-                    src={`data:${manuscript.imageType};base64,${manuscript.imageData}`}
-                    alt={manuscript.title}
-                    className="featured-image"
-                  />
+      {/* Featured Manuscript Section */}
+      <section className="featured-section">
+        <div className="featured-card">
+          <div className="featured-header">
+            <StarIcon className="w-5 h-5 featured-icon" />
+            <h2>Featured Manuscript</h2>
+          </div>
+
+          {featuredManuscript ? (
+            <>
+              <h3 className="featured-title">{featuredManuscript.title}</h3>
+
+              <div className="featured-tags">
+                {featuredManuscript.language && (
+                  <span className="tag">{featuredManuscript.language}</span>
                 )}
-
-                <div className="featured-content">
-                  <h3 className="featured-title">{manuscript.title}</h3>
-                  
-                  <div className="featured-tags">
-                    <span className="tag">{manuscript.language}</span>
-                    {manuscript.material && <span className="tag">{manuscript.material}</span>}
-                    {manuscript.condition && <span className="tag">{manuscript.condition}</span>}
-                  </div>
-
-                  <p className="featured-description">
-                    {manuscript.description}
-                  </p>
-
-                  <button 
-                    className="read-more-btn"
-                    onClick={() => navigate(`/manuscripts/${manuscript.id}`)}
-                  >
-                    Read Full Article
-                    <ArrowRightIcon className="w-4 h-4 ml-2" />
-                  </button>
-                </div>
+                {featuredManuscript.material && (
+                  <span className="tag">{featuredManuscript.material}</span>
+                )}
+                {featuredManuscript.originLocation && (
+                  <span className="tag">{featuredManuscript.originLocation}</span>
+                )}
               </div>
-            ))
+
+              <p className="featured-description">
+                {featuredManuscript.description || 'A remarkable manuscript from our collection, showcasing the richness of historical documentation and scholarly research.'}
+              </p>
+
+              <div className="featured-metadata">
+                <span>By {featuredManuscript.author}</span>
+                {featuredManuscript.dateCreated && (
+                  <span> • Created {formatDate(featuredManuscript.dateCreated)}</span>
+                )}
+              </div>
+
+              <button className="read-more-btn">
+                Read Full Article
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
+              </button>
+            </>
           ) : (
-            <div className="no-featured">
-              <p>No featured manuscripts at this time.</p>
+            <div className="featured-loading">
+              <p>Loading featured manuscript...</p>
             </div>
           )}
         </div>
@@ -165,10 +183,58 @@ const HomePage = () => {
         </div>
 
         <div className="recent-manuscripts">
-          {/* This would be populated with actual manuscript data */}
-          <div className="manuscript-placeholder">
-            <p>Recent manuscripts will be displayed here...</p>
-          </div>
+          {loading ? (
+            <div className="manuscripts-loading">
+              <p>Loading recent manuscripts...</p>
+            </div>
+          ) : error ? (
+            <div className="manuscripts-error">
+              <p>Failed to load recent manuscripts</p>
+            </div>
+          ) : recentManuscripts.length > 0 ? (
+            <div className="manuscripts-grid">
+              {recentManuscripts.map((manuscript) => (
+                <div key={manuscript.id} className="manuscript-card">
+                  <div className="manuscript-image">
+                    {manuscript.imageUrl ? (
+                      <img
+                        src={`http://localhost:8080${manuscript.imageUrl}`}
+                        alt={manuscript.title}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="manuscript-placeholder" style={{ display: manuscript.imageUrl ? 'none' : 'flex' }}>
+                      <DocumentTextIcon className="placeholder-icon" />
+                    </div>
+                  </div>
+                  <div className="manuscript-info">
+                    <h4 className="manuscript-title">{manuscript.title}</h4>
+                    <p className="manuscript-author">by {manuscript.author}</p>
+                    <p className="manuscript-date">Uploaded: {formatDate(manuscript.uploadDate)}</p>
+                    <div className="manuscript-tags">
+                      <span className="manuscript-tag">{manuscript.language}</span>
+                      <span className="manuscript-tag">{manuscript.condition}</span>
+                    </div>
+                    <button
+                      className="view-details-btn"
+                      onClick={() => onViewManuscript(manuscript.id)}
+                    >
+                      <span>View Details</span>
+                      <ArrowRightIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="manuscripts-empty">
+              <DocumentTextIcon className="empty-icon" />
+              <p>No manuscripts uploaded yet</p>
+            </div>
+          )}
         </div>
       </section>
     </div>

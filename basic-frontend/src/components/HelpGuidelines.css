@@ -1,0 +1,278 @@
+.help-guidelines-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.help-guidelines-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 32px;
+  height: 32px;
+  color: #3b82f6;
+}
+
+.modal-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #f3f4f6;
+}
+
+.close-button svg {
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
+}
+
+.modal-content {
+  padding: 0 24px 24px;
+}
+
+.guidelines-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.guidelines-section {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #fff;
+}
+
+.guidelines-section.warning {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-icon {
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.warning-icon {
+  color: #f59e0b;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.section-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.guidelines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guideline-item {
+  border-left: 3px solid #3b82f6;
+  padding-left: 16px;
+}
+
+.guideline-item strong {
+  display: block;
+  color: #111827;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.guideline-item p {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.guideline-item ul {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+}
+
+.guideline-item li {
+  margin-bottom: 4px;
+}
+
+.guideline-item li strong {
+  display: inline;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.contact-info {
+  background-color: #f9fafb;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-top: 16px;
+}
+
+.contact-info p {
+  margin: 0 0 8px 0;
+  color: #374151;
+  font-size: 14px;
+}
+
+.contact-info p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-info strong {
+  color: #111827;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .help-guidelines-overlay {
+    padding: 10px;
+  }
+
+  .help-guidelines-modal {
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 16px 16px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .modal-header h1 {
+    font-size: 20px;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .modal-content {
+    padding: 0 16px 16px;
+  }
+
+  .guidelines-content {
+    gap: 24px;
+  }
+
+  .guidelines-section {
+    padding: 16px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+
+  .guideline-item {
+    border-left: 2px solid #3b82f6;
+    padding-left: 12px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .help-guidelines-overlay {
+    position: static;
+    background: none;
+    padding: 0;
+  }
+
+  .help-guidelines-modal {
+    box-shadow: none;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .modal-header {
+    border-bottom: 2px solid #000;
+    page-break-after: avoid;
+  }
+
+  .close-button {
+    display: none;
+  }
+
+  .guidelines-section {
+    border: 1px solid #000;
+    page-break-inside: avoid;
+    margin-bottom: 16px;
+  }
+
+  .section-header {
+    page-break-after: avoid;
+  }
+}

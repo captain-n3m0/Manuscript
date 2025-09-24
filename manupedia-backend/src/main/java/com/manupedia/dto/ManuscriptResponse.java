@@ -1,12 +1,10 @@
 package com.manupedia.dto;
 
-import com.manupedia.entity.Manual.Condition;
+import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+public class ManuscriptResponse {
 
-public class ManualUploadRequest {
-    @NotBlank(message = "Title is required")
+    private Long id;
     private String title;
     private String author;
     private String dateCreated;
@@ -14,15 +12,33 @@ public class ManualUploadRequest {
     private String language;
     private String material;
     private String dimensions;
-    private Condition condition;
-    
-    @Size(max = 2000, message = "Description cannot exceed 2000 characters")
+    private String condition;
     private String description;
     private String content;
-    private byte[] imageData;
-    private String imageType;
+    private String imageUrl;
+    private String uploadedByUsername;
+    private LocalDateTime uploadDate;
+    private LocalDateTime lastModified;
+
+    // Constructors
+    public ManuscriptResponse() {}
+
+    public ManuscriptResponse(Long id, String title, String author, String uploadedByUsername) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.uploadedByUsername = uploadedByUsername;
+    }
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -79,11 +95,11 @@ public class ManualUploadRequest {
         this.dimensions = dimensions;
     }
 
-    public Condition getCondition() {
+    public String getCondition() {
         return condition;
     }
 
-    public void setCondition(Condition condition) {
+    public void setCondition(String condition) {
         this.condition = condition;
     }
 
@@ -103,19 +119,35 @@ public class ManualUploadRequest {
         this.content = content;
     }
 
-    public byte[] getImageData() {
-        return imageData;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getImageType() {
-        return imageType;
+    public String getUploadedByUsername() {
+        return uploadedByUsername;
     }
 
-    public void setImageType(String imageType) {
-        this.imageType = imageType;
+    public void setUploadedByUsername(String uploadedByUsername) {
+        this.uploadedByUsername = uploadedByUsername;
+    }
+
+    public LocalDateTime getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(LocalDateTime uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
     }
 }
